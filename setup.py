@@ -2,7 +2,7 @@ from distutils.core import setup
 setup(
     name='flashback',
     packages=['flashback'],
-    version='0.1',
+    version='0.1.1',
     description='The handiest Flashback scraper in the game',
     author='Robin Linderborg',
     author_email='robin.linderborg@gmail.com',
