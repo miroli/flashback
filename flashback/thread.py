@@ -16,11 +16,11 @@ class Thread():
         self.base_url = base_url
         self.posts = []
 
-    def get_posts(self):
+    def get_posts(self, pages=None):
         """Gets all comments in a given thread"""
         r = requests.get(self.base_url)
         soup = BeautifulSoup(r.text, 'html.parser')
-        page_count = self.__get_page_count(soup)
+        page_count = pages or self.__get_page_count(soup)
 
         for page in range(1, page_count + 1):
             slug = 'p{page}'.format(page=str(page))
@@ -65,7 +65,8 @@ class Thread():
 
         for post in posts:
             parsed_post = {}
-            parsed_post['user_name'] = self.__get_post_user(post)
+            parsed_post['user_name'] = self.__get_post_user_name(post)
+            parsed_post['user_id'] = self.__get_post_user_id(post)
             parsed_post['id'] = self.__get_post_id(post)
             parsed_post['time'] = self.__get_post_time(post)
             parsed_post['content'] = self.__get_post_content(post)
@@ -82,9 +83,13 @@ class Thread():
         else:
             return time_text[0:17].replace(',', '')
 
-    def __get_post_user(self, post):
+    def __get_post_user_name(self, post):
         """Extracts the user name from a post"""
         return post.select_one('a.bigusername').text
+
+    def __get_post_user_id(self, post):
+        """Extracts the user id from a post"""
+        return post.select_one('a.bigusername')['href']
 
     def __get_post_id(self, post):
         """Extracts the id of a post"""
