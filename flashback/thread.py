@@ -104,7 +104,11 @@ class Thread():
             quote_text = quote_text.replace(u'\xa0', '')
             quote_text = quote_text.replace(u'\xc2', '')
             quote_text = quote_text.replace(u'\t', '')
-            quote.replace_with(u'[Q]{quote}[EQ]'.format(quote=quote_text))
+            quote.replace_with(u'[FQ]{}[EFQ]'.format(quote_text))
+
+        spoilers = content.find_all('div', {'class': 'post-bbcode-spoiler'})
+        for spoiler in spoilers:
+            spoiler.replace_with(u'[FSP]{}[EFP]'.format(spoiler.text.strip()))
 
         return content.text.strip()
 
