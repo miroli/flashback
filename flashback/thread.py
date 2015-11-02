@@ -20,8 +20,8 @@ class Thread():
     def get_posts(self, pages=None):
         """Gets all comments in a given thread"""
         r = requests.get(self.base_url)
-        soup = BeautifulSoup(r.text, 'html.parser')
-        page_count = pages or self.__get_page_count(soup)
+        self.soup = BeautifulSoup(r.text, 'html.parser')
+        page_count = pages or self.__get_page_count(self.soup)
 
         for page in range(1, page_count + 1):
             slug = 'p{page}'.format(page=str(page))
@@ -55,6 +55,18 @@ class Thread():
         return {
             'common_authors': common_authors
         }
+
+    @property
+    def title(self):
+        """Title of thread"""
+        return self.soup.title.text[0:-18]
+
+    @property
+    def section(self):
+        navbar = self.soup.find('table', {'class': 'forum-navbar'})
+        breadcrumbs = navbar.find('tr', {'valign': 'bottom'}).find_all('a')
+        section = breadcrumbs[-1]
+        return {'id': section['href'][1:], 'name': section.text}
 
     def __get_page_posts(self, url):
         """Gets all posts on a page"""
