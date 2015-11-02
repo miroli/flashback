@@ -4,6 +4,7 @@ import re
 import csv
 import json
 import datetime
+import urllib
 from collections import Counter
 
 import requests
@@ -109,6 +110,11 @@ class Thread():
         spoilers = content.find_all('div', {'class': 'post-bbcode-spoiler'})
         for spoiler in spoilers:
             spoiler.replace_with(u'[FSP]{}[EFP]'.format(spoiler.text.strip()))
+
+        links = content.find_all('a')
+        for link in links:
+            href = urllib.unquote(link['href'].split('.php?u=')[1])
+            link.replace_with('[FA]{} {}[EFA]'.format(href, link.text).strip())
 
         return content.text.strip()
 
