@@ -11,6 +11,22 @@ import requests
 from bs4 import BeautifulSoup
 
 
+class TrashException(Exception):
+    pass
+
+
+class AuthException(Exception):
+    pass
+
+
+class LoginException(Exception):
+    pass
+
+
+class NotFoundException(Exception):
+    pass
+
+
 class Thread():
 
     def __init__(self, base_url):
@@ -21,6 +37,7 @@ class Thread():
         """Gets all comments in a given thread"""
         r = requests.get(self.base_url)
         self.soup = BeautifulSoup(r.text, 'html.parser')
+        self.__check_errors()
         page_count = pages or self.__get_page_count(self.soup)
 
         for page in range(1, page_count + 1):
@@ -68,13 +85,39 @@ class Thread():
         section = breadcrumbs[-1]
         return {'id': section['href'][1:], 'name': section.text}
 
+    def __check_errors(self):
+        trash_text = (u'Denna tråd har flyttats till "Papperskorgen". '
+                      u'Ett delforum för trådar med för låg kvalitet.')
+        auth_text = (u'du har inte behörighet till den här sidan. '
+                     u'Det kan bero på en av flera anledningar:')
+        login_text = (u'Du är inte inloggad eller också har du inte behörighet'
+                      u' att se den här sidan. Det kan bero på en av flera')
+        not_found_text = (u'Du angav ett ogiltigt Ämne. Om du följde en giltig'
+                          u' länk, var vänlig och kontakta den')
+        not_specified_text = (u'Inget Ämne specifierat. Om du följde en giltig'
+                              u' länk var vänlig och meddela den')
+
+        if not self.title and trash_text in self.soup.text:
+            raise TrashException('Login required for threads in trashcan.')
+        if not self.title and auth_text in self.soup.text:
+            raise AuthException('Your account lacks sufficient permissions.')
+        if not self.title and login_text in self.soup.text:
+            raise LoginException('Login required for this particular thread.')
+        if not self.title and not_found_text in self.soup.text:
+            raise NotFoundException('Thread does not exist.')
+        if not self.title and not_specified_text in self.soup.text:
+            raise NotFoundException('Thread does not exist.')
+
     def __get_page_posts(self, url):
         """Gets all posts on a page"""
         parsed_posts = []
         r = requests.get(url)
         soup = BeautifulSoup(r.text, 'html.parser')
         posts = soup.select('#posts > div')
-        posts.pop()
+        try:
+            posts.pop()
+        except IndexError:
+            print 'INDEX ERROR: ' + url
 
         for post in posts:
             parsed_post = {}
@@ -98,11 +141,19 @@ class Thread():
 
     def __get_post_user_name(self, post):
         """Extracts the user name from a post"""
-        return post.select_one('a.bigusername').text
+        try:
+            user_name = post.select_one('a.bigusername').text
+        except AttributeError:
+            user_name = ''
+        return user_name
 
     def __get_post_user_id(self, post):
         """Extracts the user id from a post"""
-        return post.select_one('a.bigusername')['href']
+        try:
+            user_id = post.select_one('a.bigusername')['href']
+        except TypeError:
+            user_id = ''
+        return user_id
 
     def __get_post_id(self, post):
         """Extracts the id of a post"""
@@ -125,8 +176,12 @@ class Thread():
 
         links = content.find_all('a')
         for link in links:
-            href = urllib.unquote(link['href'].split('.php?u=')[1])
-            link.replace_with('[FA]{} {}[EFA]'.format(href, link.text).strip())
+            try:
+                href = urllib.unquote(link['href'].split('.php?u=')[1])
+                link.replace_with(u'[FA]{} {}[EFA]'.format(href,
+                                                          link.text).strip())
+            except IndexError:
+                continue
 
         return content.text.strip()
 
