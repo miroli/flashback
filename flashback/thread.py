@@ -36,6 +36,7 @@ class Thread():
     def get_posts(self, pages=None):
         """Gets all comments in a given thread"""
         r = requests.get(self.base_url)
+        self.response = r
         self.soup = BeautifulSoup(r.text, 'html.parser')
         self.__check_errors()
         page_count = pages or self.__get_page_count(self.soup)
