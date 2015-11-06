@@ -115,10 +115,7 @@ class Thread():
         r = requests.get(url)
         soup = BeautifulSoup(r.text, 'html.parser')
         posts = soup.select('#posts > div')
-        try:
-            posts.pop()
-        except IndexError:
-            print 'INDEX ERROR: ' + url
+        posts.pop()
 
         for post in posts:
             parsed_post = {}
@@ -137,6 +134,10 @@ class Thread():
         if 'Idag' in time_text:
             date = datetime.datetime.now().strftime('%Y-%m-%d')
             return time_text[0:11].replace('Idag,', date)
+        if u'Igår' in time_text:
+            now = datetime.datetime.now()
+            date = (now - datetime.timedelta(hours=24)).strftime('%Y-%m-%d')
+            return time_text[0:11].replace(u'Igår,', date)
         else:
             return time_text[0:17].replace(',', '')
 
