@@ -23,7 +23,23 @@ url = 'https://www.flashback.org/<some-url>'
 thread = flashback.get(url)
 ```
 
-Iterate over the posts. Each post is a dict with the following keys: id, user_name, time and content. They should be quite self-explanatory.
+Each thread has the following attributes:
+
+* thread_name
+* thread_id
+* section_id
+* section_name
+
+Each post in the thread is a dict with the following keys:
+
+* id
+* user_name
+* user_id
+* time
+* content
+
+Iterate over the posts.
+
 ```python
 for post in thread:
     print post['content']
