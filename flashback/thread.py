@@ -119,9 +119,11 @@ class Thread():
 
         for post in posts:
             parsed_post = {}
+            parsed_post['id'] = self.__get_post_id(post)
+            if parsed_post['id'] in [x['id'] for x in self.posts]:
+                break
             parsed_post['user_name'] = self.__get_post_user_name(post)
             parsed_post['user_id'] = self.__get_post_user_id(post)
-            parsed_post['id'] = self.__get_post_id(post)
             parsed_post['time'] = self.__get_post_time(post)
             parsed_post['content'] = self.__get_post_content(post)
             parsed_posts.append(parsed_post)
