@@ -35,9 +35,8 @@ class Thread():
 
     def get_posts(self, pages=None):
         """Gets all comments in a given thread"""
-        r = requests.get(self.base_url)
-        self.response = r
-        self.soup = BeautifulSoup(r.text, 'html.parser')
+        self.response = requests.get(self.base_url)
+        self.soup = BeautifulSoup(self.response.text, 'html.parser')
         self.__check_errors()
         page_count = pages or self.__get_page_count(self.soup)
 
@@ -65,7 +64,13 @@ class Thread():
 
     def to_json(self, fname):
         """Saves the posts to a JSON file"""
-        pass
+        out = {
+            'title': self.title,
+            'posts': self.posts
+        }
+
+        with open(fname, 'w') as f:
+            f.write(json.dumps(out))
 
     def describe(self):
         counter = Counter([x['user_name'] for x in self.posts])
@@ -87,36 +92,49 @@ class Thread():
         return {'id': section['href'][1:], 'name': section.text}
 
     def __check_errors(self):
-        trash_text = (u'Denna tråd har flyttats till "Papperskorgen". '
-                      u'Ett delforum för trådar med för låg kvalitet.')
-        auth_text = (u'du har inte behörighet till den här sidan. '
-                     u'Det kan bero på en av flera anledningar:')
-        login_text = (u'Du är inte inloggad eller också har du inte behörighet'
-                      u' att se den här sidan. Det kan bero på en av flera')
-        not_found_text = (u'Du angav ett ogiltigt Ämne. Om du följde en giltig'
-                          u' länk, var vänlig och kontakta den')
-        not_specified_text = (u'Inget Ämne specifierat. Om du följde en giltig'
-                              u' länk var vänlig och meddela den')
+        if self.title:
+            return
 
-        if not self.title and trash_text in self.soup.text:
+        trash_text = (
+            u'Denna tråd har flyttats till "Papperskorgen". '
+            u'Ett delforum för trådar med för låg kvalitet.'
+        )
+        auth_text = (
+            u'du har inte behörighet till den här sidan. '
+            u'Det kan bero på en av flera anledningar:'
+        )
+        login_text = (
+            u'Du är inte inloggad eller också har du inte behörighet'
+            u' att se den här sidan. Det kan bero på en av flera'
+        )
+        not_found_text = (
+            u'Du angav ett ogiltigt Ämne. Om du följde en giltig'
+            u' länk, var vänlig och kontakta den'
+        )
+        not_specified_text = (
+            u'Inget Ämne specifierat. Om du följde en giltig'
+            u' länk var vänlig och meddela den'
+        )
+
+        if trash_text in self.soup.text:
             raise TrashException('Login required for threads in trashcan.')
-        if not self.title and auth_text in self.soup.text:
+        if auth_text in self.soup.text:
             raise AuthException('Your account lacks sufficient permissions.')
-        if not self.title and login_text in self.soup.text:
+        if login_text in self.soup.text:
             raise LoginException('Login required for this particular thread.')
-        if not self.title and not_found_text in self.soup.text:
+        if not_found_text in self.soup.text:
             raise NotFoundException('Thread does not exist.')
-        if not self.title and not_specified_text in self.soup.text:
+        if not_specified_text in self.soup.text:
             raise NotFoundException('Thread does not exist.')
 
     def __get_page_posts(self, url):
         """Gets all posts on a page"""
-        parsed_posts = []
         r = requests.get(url)
         soup = BeautifulSoup(r.text, 'html.parser')
         posts = soup.select('#posts > div')
         posts.pop()
 
+        parsed_posts = []
         for post in posts:
             parsed_post = {}
             parsed_post['id'] = self.__get_post_id(post)
@@ -183,7 +201,7 @@ class Thread():
             try:
                 href = urllib.unquote(link['href'].split('.php?u=')[1])
                 link.replace_with(u'[FA]{} {}[EFA]'.format(href,
-                                                          link.text).strip())
+                                                           link.text).strip())
             except IndexError:
                 continue
 
