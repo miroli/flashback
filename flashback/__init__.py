@@ -1,7 +1,8 @@
-from . import thread
+from thread import Thread
+from post import Post
 
 
-def get(base_url, pages=None):
-    t = thread.Thread(base_url)
-    t.get_posts(pages)
+def get(base_url):
+    t = Thread(base_url)
+    t.get()
     return t
