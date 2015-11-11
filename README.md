@@ -46,7 +46,7 @@ Each post in the thread is an object with the following attributes:
 
 ```python
 for post in thread:
-    print post['content']
+    print post.content
 ```
 
 ##### Get a single post by index.
