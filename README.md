@@ -1,3 +1,6 @@
+![Flashback version](https://img.shields.io/pypi/v/flashback.svg)
+![Flashback downloads](https://img.shields.io/pypi/dm/flashback.svg)
+
 Flashback is a Python scraper for the Swedish bulletin board site flashback.org. The scraper does one thing, and it does it well.
 
 ```python
