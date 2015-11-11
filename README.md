@@ -34,7 +34,7 @@ Each thread has the following attributes:
 * section_id
 * section_name
 
-Each post in the thread is an object with the following keys:
+Each post in the thread is an object with the following attributes:
 
 * id
 * user_name
