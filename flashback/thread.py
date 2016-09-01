@@ -27,6 +27,7 @@ class LoginException(Exception):
 class NotFoundException(Exception):
     pass
 
+
 errors = [
     ((u'Denna tråd har flyttats till "Papperskorgen". '
       u'Ett delforum för trådar med för låg kvalitet.'),
@@ -76,8 +77,7 @@ class Thread():
 
     def append_post(self, soup):
         post = Post(soup)
-        if post.id not in [p.id for p in self.posts]:
-            self.posts.append(post)
+        self.posts.append(post)
 
     def describe(self):
         counter = Counter([x['user_name'] for x in self.posts])
