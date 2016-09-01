@@ -10,8 +10,8 @@ setup(
         'beautifulsoup4==4.4.1',
         'requests==2.8.0'
     ],
-    url='https://github.com/vienno/flashback',
-    download_url='https://github.com/vienno/flashback/tarball/0.2',
+    url='https://github.com/miroli/flashback',
+    download_url='https://github.com/miroli/flashback/tarball/0.2',
     keywords=['flashback', 'scraping'],
     classifiers=[],
 )
