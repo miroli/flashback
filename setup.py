@@ -11,7 +11,7 @@ setup(
         'requests==2.8.0'
     ],
     url='https://github.com/miroli/flashback',
-    download_url='https://github.com/miroli/flashback/tarball/0.3',
+    download_url='https://github.com/miroli/flashback/tarball/0.4',
     keywords=['flashback', 'scraping'],
     classifiers=[],
 )
