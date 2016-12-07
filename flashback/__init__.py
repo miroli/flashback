@@ -1,5 +1,5 @@
-from thread import Thread
-from post import Post
+from .thread import Thread
+from .post import Post
 
 
 def get(base_url):
