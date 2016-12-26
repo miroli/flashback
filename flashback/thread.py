@@ -116,10 +116,10 @@ class Thread():
             writer.writeheader()
 
             for p in self.posts:
-                row = {'id': p['id'].encode('utf-8'),
-                       'user_name': p['user_name'].encode('utf-8'),
-                       'time': p['time'].encode('utf-8'),
-                       'content': p['content'].encode('utf-8')}
+                row = {'id': p.id.encode('utf-8'),
+                       'user_name': p.user_name.encode('utf-8'),
+                       'time': p.timestamp.encode('utf-8'),
+                       'content': p.content.encode('utf-8')}
                 writer.writerow(row)
 
     def to_json(self, fname):
