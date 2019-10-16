@@ -1,3 +1,5 @@
+# This package is deprecated
+
 ![Flashback version](https://img.shields.io/pypi/v/flashback.svg)
 ![Flashback downloads](https://img.shields.io/pypi/dm/flashback.svg)
 
@@ -12,14 +14,14 @@ u'Min hund morrar åt mig'
 47
 ```
 
-##Installation
+## Installation
 Use pip to install Flashback.
 
 ```
 $ pip install flashback
 ```
 
-##Usage
+## Usage
 
 ##### Scrape a thread/discussion.
 ```python
@@ -67,7 +69,7 @@ thread.to_csv('some_discussion.csv')
 thread.to_json('some_discussion.json')
 ```
 
-##Formatting
+## Formatting
 
 Some posts contain specially formatted HTML elements, such as quote containers and hidden spoilers. These HTML tags are parsed and formatted using a simple notation.
 
