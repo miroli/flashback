@@ -8,7 +8,7 @@ setup(
     author_email='robin.linderborg@gmail.com',
     install_requires=[
         'beautifulsoup4==4.4.1',
-        'requests==2.8.0'
+        'requests==2.20.0'
     ],
     url='https://github.com/miroli/flashback',
     download_url='https://github.com/miroli/flashback/tarball/0.4',
